@@ -18,7 +18,7 @@ class RoleMiddleware
     
      //old
     // public function handle(Request $request, Closure $next)
-    public static function handle(Request $request,Closure $next,$role)
+    public  function handle(Request $request,Closure $next,$role)
     {
         // 1. Check if the user is logged in at all. If not, redirect to login page.
         if (!Session::has('logged_in')) {
@@ -31,7 +31,8 @@ class RoleMiddleware
         $userRole = Session::get('role');
 
         if($userRole !== $role){
-            return redirect('/')->with('error','คุณไม่มีสิทธิ์เข้าใช้งานในหน้านี้');
+            // return redirect('/')->with('error','คุณไม่มีสิทธิ์เข้าใช้งานในหน้านี้');
+            return redirect('/')->with('error', 'คุณไม่มีสิทธิ์เข้าใช้งานในหน้านี้ (' . $role . ' only)');
         }
        
        

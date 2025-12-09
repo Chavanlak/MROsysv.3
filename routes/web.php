@@ -70,11 +70,9 @@ Route::middleware(['customauth'])->group(function () {
     
     Route::get('/repair', [NotiRepairController::class, 'ShowRepairForm']);
     Route::get('/repair/repair2', [EquipmentController::class, 'ShowAllEquipment']);
-    Route::get('/repairBM', [NotiRepairController::class, 'ShowRepairFormBM']);
+    // Route::get('/repairBM', [NotiRepairController::class, 'ShowRepairFormBM']);
     Route::get('/backtorepair', [EquipmentController::class, 'backtorepair']);
     Route::post('/repair/submit', [NotiRepairController::class, 'saveNotiRepair']);
-    
-    // Route::get('/repairBM', ...); // ถ้ามี
 });
 
 
@@ -139,16 +137,18 @@ Route::get('/success', function () {
 
 /// dashbord admin////
 // Route สำหรับแสดงรายการแจ้งซ่อมทั้งหมด
-// Route::get('/noti',[NotiRepairController::class,'checkNotiRepair'])->name('noti.list')->middleware('RoleMiddleware');
+// Route::get('/noti',[NotiRepairController::class,'checkNotiRepair'])->name('noti.list');
 // // Route::get('/noti/{notirepaitid}',[NotiRepairContoller::class,'reciveNotirepair']);
 // // // 1. (GET) Route สำหรับแสดงหน้าฟอร์มอัพเดตสถานะ (เป้าหมายของการ Redirect)
 // Route::get('/updatestatus/form/{notirepaitid}',[NotiRepairController::class,'showUpdateStatusForm'])->name('noti.show_update_form');
-
+// Route::post('/updateitem',[NotiRepairController::class,'updateStatus'])->name('notiupdate');
 // // // 2. (POST) Route สำหรับดำเนินการ 'กดรับของ' (Action จากหน้ารายการ)
+// //พแกดปุ่มได้รับของเเล้วจะเข้าเร้านี้
 // Route::post('/noti/accept/{notirepaitid}',[NotiRepairController::class,'acceptNotisRepair'])->name('noti.accept');
 
 // // 3. (POST) Route สำหรับส่งข้อมูลอัพเดตสถานะจากฟอร์ม (ชื่อเดิมที่คุณใช้) //บันทึกสถานะใหม่ลงฐานข้อมูล
-// Route::post('/updaterecive',[NotiRepairController::class,'updateStatus'])->name('notiupdate');
+// //http://127.0.0.1:8000/updatestatus/form/265 เร้าอัพเดทสถานะการได้ของเเล้ว
+
 
 
 // ///dashbord หน้าร้าน
@@ -161,9 +161,6 @@ Route::middleware(['RoleMiddleware:AdminTechnicianStore'])->group(function () {
 
     // หน้าฟอร์มอัพเดตสถานะ (GET)
     Route::get('/updatestatus/form/{notirepaitid}', [NotiRepairController::class, 'showUpdateStatusForm'])->name('noti.show_update_form');
-
-    // ปุ่มกดรับของ (POST Action)
-    Route::post('/noti/accept/{notirepaitid}', [NotiRepairController::class, 'acceptNotisRepair'])->name('noti.accept');
 
     // ปุ่มบันทึกสถานะใหม่ (POST Form)
     Route::post('/updaterecive', [NotiRepairController::class, 'updateStatus'])->name('notiupdate');
@@ -178,6 +175,8 @@ Route::middleware(['RoleMiddleware:Frontstaff'])->group(function () {
 
     // หน้า Dashboard สำหรับหน้าร้าน
     Route::get('/noti/storefront', [NotiRepairController::class, 'getNotiForStoreFront'])->name('noti.storefront');
+        // ปุ่มกดรับของ (POST Action)
+    Route::post('/noti/accept/{notirepaitid}', [NotiRepairController::class, 'acceptNotisRepair'])->name('noti.accept');
 
 });
 

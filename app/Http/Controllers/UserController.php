@@ -98,33 +98,62 @@ public function loginPost(Request $request){
         return redirect('/')->with('error','ไม่พบผู้ใช้');
     }
     if($user->staffpassword != $staffpassword){
-        return redirect('/','error','รหัสผ่านไม่ถูกต้อง');
-    }
+        return redirect('/')->with('error', 'รหัสผ่านไม่ถูกต้อง'); 
     //เก็บ seesion
     Session::put('logged_in',true);
     Session::put('staffname',$user->staffname);
     Session::put('staffcode',$user->staffcode);
     Session::put('permis_BM',$user->permis_BM);
     Session::put('role',$user->role);
- // 3.1 กลุ่มช่าง / Admin -> ไปหน้า Dashboard ช่าง
- if ($user->role === 'AdminTechnicianStore') {
-    return redirect('/noti'); 
-} 
 
-// 3.2 กลุ่ม Frontstaff
-$permis = strtoupper($user->permis_BM); 
+    // if(($user->role === 'FrontStaff') &&  ($user->permis_BM === 'Y')){
+    //     return redirect('/noti/storefront');
+    // }
+    // elseif (($user->role != 'FrontStaff') &&  ($user->permis_BM === 'Y')){
+    //     return redirect('/repair')->with('success', 'เข้าสู่ระบบสำเร็จ');
 
-// เช็คว่าเป็น BM หรือไม่?
-if ($permis !== 'N') {
-    // [CASE BM] เป็น BM -> พุ่งไปหน้าฟอร์มแจ้งซ่อมทันที
-    return redirect('/repairBM');
-} 
-else {
-    // [CASE Frontstaff ทั่วไป] -> พุ่งไปหน้า Dashboard หน้าร้าน
-    // ** แก้ตรงนี้จาก /repair เป็น route ของ Dashboard ครับ **
-    return redirect()->route('noti.storefront'); 
-    // หรือ return redirect('/noti/storefront'); 
+    //     return redirect('/repair');
+    // }
+    // if($user->role === 'AdminTechnicianStore'){
+    //     return redirect('noti');
+    // }
+
+
+    if ($user->role === 'AdminTechnicianStore') {
+        return redirect()->route('noti.list'); // หรือ redirect('noti')
+    }
+
+    // CASE B: FrontStaff ที่เป็น BM (คนรับของหน้าร้าน)
+    if ($user->role === 'Frontstaff' && $user->permis_BM === 'Y') {
+        return redirect()->route('noti.storefront'); // หรือ redirect('/noti/storefront')
+    }
+
+    // CASE C: User ทั่วไป (N) และ User BM แผนกอื่น (Y ที่ไม่ใช่ FrontStaff)
+    // ให้ส่งไป /repair ทั้งหมด 
+    // เพราะใน Controller: ShowRepairForm เราเขียน Logic แยก View ไว้แล้ว
+    return redirect('/repair')->with('success', 'เข้าสู่ระบบสำเร็จ');
 }
+ // 3.1 กลุ่มช่าง / Admin -> ไปหน้า Dashboard ช่าง
+//  if ($user->role === 'AdminTechnicianStore') {
+//     return redirect('/noti'); 
+// } 
+
+// // 3.2 กลุ่ม Frontstaff
+// $permis = strtoupper($user->permis_BM); 
+
+// // เช็คว่าเป็น BM หรือไม่?
+// if ($permis !== 'N') {
+//     // [CASE BM] เป็น BM -> พุ่งไปหน้าฟอร์มแจ้งซ่อมทันที
+//     return redirect('/repairBM');
+// } 
+// else {
+//     // [CASE Frontstaff ทั่วไป] -> พุ่งไปหน้า Dashboard หน้าร้าน
+//     // ** แก้ตรงนี้จาก /repair เป็น route ของ Dashboard ครับ **
+//     // return redirect()->route('noti.storefront'); 
+//     return redirect()->route('/repair'); 
+
+//     // หรือ return redirect('/noti/storefront'); 
+// }
     }
     // class UserController extends Controller
     // {

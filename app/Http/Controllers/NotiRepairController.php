@@ -233,59 +233,7 @@ class NotiRepairController extends Controller
         return redirect()->route('success');
     }
     //ส่วนของ dashbord
-    // public static function checkNotiRepair(Request $request)
-    // {
-    //         $searchTerm = $request->input('search');
 
-    //         // 1) ดึงสถานะล่าสุดจากฐานที่สาม
-    //         $latestStatusId = DB::connection('third')
-    //             ->table('statustracking')
-    //             ->select('NotirepairId', DB::raw('MAX(statustrackingId) as latest_id'))
-    //             ->groupBy('NotirepairId');
-    
-    //         $query = NotiRepair::select(
-    //             'notirepair.*',
-    //             'latest_status.status as status',
-    //             'latest_status.statusDate as statusDate',
-    //             'equipment.equipmentName as equipmentName'
-    //         )
-    //             ->leftJoin('equipment', 'equipment.equipmentId', '=', 'notirepair.equipmentId')
-    
-    //             // 2) Join subquery
-    //             ->leftJoinSub($latestStatusId, 'latest_id_table', function ($join) {
-    //                 $join->on('notirepair.NotirepairId', '=', 'latest_id_table.NotirepairId');
-    //             })
-    
-    //             // 3) Join ตาราง statustracking จากฐานข้อมูล third
-    //             ->leftJoin(
-    //                 DB::raw(env('THIRD_DB_DATABASE') . '.statustracking as latest_status'),
-    //                 function ($join) {
-    //                     $join->on('latest_status.NotirepairId', '=', 'notirepair.NotirepairId')
-    //                         ->on('latest_status.statustrackingId', '=', 'latest_id_table.latest_id');
-    //                 }
-    //             )
-    
-    //             // 4) Filter
-    //             ->where(function ($q) {
-    //                 $q->where('latest_status.status', '!=', 'ยังไม่ได้รับของ');
-    //             })
-    //             ->orderBy('notirepair.DateNotirepair', 'desc');
-    //             if ($searchTerm) {
-    //             $query->where(function ($q) use ($searchTerm) {
-    //                 $q->where('notirepair.NotirepairId', 'like', "%$searchTerm%")
-    //                     ->orWhere('equipment.equipmentName', 'like', "%$searchTerm%")
-    //                     ->orWhere('notirepair.DeatailNotirepair', 'like', "%$searchTerm%")
-    //                     ->orWhere('latest_status.status', 'like', "%$searchTerm%");
-    //             });
-    //         }
-    
-    //         $noti = $query->paginate(2)->withQueryString();
-    //         return view('dashborad.notirepairlist', compact('noti'));
-    //     }
- 
-      
-    // }
-    // ///////// login //////
     public static function checkNotiRepair(Request $request)
     {
         //ส่วนของหน้า login
@@ -337,11 +285,10 @@ class NotiRepairController extends Controller
                 });
             }
     
-            $noti = $query->paginate(2)->withQueryString();
+            $noti = $query->paginate(5)->withQueryString();
             return view('dashborad.notirepairlist', compact('noti'));
         }
     }
-
     public static function reciveNotirepair($notirepaitid)
     {
         $recivenoti = NotiRepairRepository::getNotirepirById($notirepaitid);
@@ -478,47 +425,7 @@ class NotiRepairController extends Controller
     }
     }
     
-    // public function getNotiForStoreFront(Request $request)
-    // {
-    //     $searchTerm = $request->input('search');
 
-    //     // Subquery: หา statustrackingId ล่าสุดของแต่ละรายการแจ้งซ่อม
-    //     $latestStatusId = DB::connection('third')
-    //         ->table('statustracking')
-    //         ->select('NotirepairId', DB::raw('MAX(statustrackingId) as latest_id'))
-    //         ->groupBy('NotirepairId');
-
-    //     // Base Query: ดึงข้อมูลแจ้งซ่อมทั้งหมด และ JOIN สถานะล่าสุด
-    //     $query = NotiRepair::select(
-    //         'notirepair.*',
-    //         // 💡 ถ้าสถานะเป็น NULL ให้ใช้ 'ยังไม่ได้รับของ' 
-    //         DB::raw("COALESCE(latest_status.status, 'ยังไม่ได้รับของ') as status"),
-    //         'latest_status.statusDate as statusDate',
-    //         'equipment.equipmentName as equipmentName'
-    //     )
-    //         ->leftJoin('equipment', 'equipment.equipmentId', '=', 'notirepair.equipmentId')
-    //         ->leftJoinSub($latestStatusId, 'latest_id_table', function ($join) {
-    //             $join->on('notirepair.NotirepairId', '=', 'latest_id_table.NotirepairId');
-    //         })
-    //         ->leftJoin('statustracking as latest_status', function ($join) {
-    //             $join->on('latest_status.NotirepairId', '=', 'notirepair.NotirepairId')
-    //                 ->on('latest_status.statustrackingId', '=', 'latest_id_table.latest_id');
-    //         })
-    //         ->orderBy('notirepair.DateNotirepair', 'desc');
-
-    //     if ($searchTerm) {
-    //         $query->where(function ($q) use ($searchTerm) {
-    //             $q->where('notirepair.NotirepairId', 'like', '%' . $searchTerm . '%')
-    //                 ->orWhere('equipment.equipmentName', 'like', '%' . $searchTerm . '%')
-    //                 ->orWhere('notirepair.DeatailNotirepair', 'like', '%' . $searchTerm . '%')
-    //                 ->orWhere(DB::raw("COALESCE(latest_status.status, 'ยังไม่ได้รับของ')"), 'like', '%' . $searchTerm . '%');
-    //         });
-    //     }
-
-    //     $noti = $query->paginate(20)->withQueryString();
-
-    //     return view('dashborad.storefront', compact('noti')); // ตรวจสอบพาธ View
-    // }
     public static function checkall()
     {
         $check = StatustrackingRepository::getAllStatustracking();
